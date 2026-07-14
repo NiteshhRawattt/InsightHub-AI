@@ -1,0 +1,85 @@
+version: "3.9"
+
+# ============================================================
+#  InsightHub AI — Docker Compose
+#  Services: backend (FastAPI) | frontend (React) | chromadb
+# ============================================================
+
+services:
+
+  # ── Backend: Python FastAPI ────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: insighthub_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=${APP_ENV:-development}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-1.5-pro}
+      - CHROMA_PERSIST_DIR=/app/data/chroma
+      - UPLOAD_DIR=/app/data/uploads
+      - BACKEND_CORS_ORIGINS=${BACKEND_CORS_ORIGINS}
+    volumes:
+      - ./data:/app/data          # Persist ChromaDB & uploads
+      - ./backend:/app            # Hot-reload in development
+    depends_on:
+      - chromadb
+    networks:
+      - insighthub_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ── Frontend: React + Vite (Dev) / Nginx (Prod) ───────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: insighthub_frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:8000}
+      - VITE_APP_NAME=${VITE_APP_NAME:-InsightHub AI}
+    volumes:
+      - ./frontend:/app           # Hot-reload in development
+      - /app/node_modules         # Prevent overwriting node_modules
+    depends_on:
+      - backend
+    networks:
+      - insighthub_net
+
+  # ── ChromaDB: Vector Database ─────────────────────────────
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: insighthub_chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - insighthub_net
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_HTTP_PORT=8000
+
+# ── Volumes ────────────────────────────────────────────────
+volumes:
+  chroma_data:
+    driver: local
+
+# ── Networks ───────────────────────────────────────────────
+networks:
+  insighthub_net:
+    driver: bridge

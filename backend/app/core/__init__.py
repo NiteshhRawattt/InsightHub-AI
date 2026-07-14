@@ -1,0 +1,1 @@
+# InsightHub AI — Core Package

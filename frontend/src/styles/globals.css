@@ -1,0 +1,124 @@
+/* ============================================================
+   InsightHub AI — Global Styles
+   Tailwind base + custom design system tokens
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base Reset & Defaults ──────────────────────────────────── */
+@layer base {
+  * {
+    @apply border-surface-500;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-surface-900 text-white font-sans;
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-surface-800;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-500 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-brand-600;
+  }
+
+  /* Selection color */
+  ::selection {
+    @apply bg-brand-600/40 text-white;
+  }
+}
+
+/* ── Component Classes ──────────────────────────────────────── */
+@layer components {
+
+  /* Glass card effect */
+  .glass-card {
+    @apply bg-surface-700/60 backdrop-blur-sm border border-surface-500/50 rounded-2xl;
+  }
+
+  /* Primary button */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl
+           bg-brand-600 hover:bg-brand-500 active:bg-brand-700
+           text-white font-medium text-sm
+           transition-all duration-200
+           shadow-glow-brand hover:shadow-glow-brand/50
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Ghost button */
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-4 py-2 rounded-xl
+           bg-transparent hover:bg-surface-600/60
+           text-gray-300 hover:text-white font-medium text-sm
+           transition-all duration-200
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Input field */
+  .input-field {
+    @apply w-full px-4 py-2.5 rounded-xl
+           bg-surface-600/50 border border-surface-500/60
+           text-white placeholder-gray-500
+           focus:outline-none focus:ring-2 focus:ring-brand-500/60 focus:border-brand-500/60
+           transition-all duration-200;
+  }
+
+  /* Sidebar item */
+  .sidebar-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl
+           text-gray-400 hover:text-white hover:bg-surface-600/60
+           transition-all duration-200 cursor-pointer text-sm font-medium;
+  }
+
+  .sidebar-item.active {
+    @apply text-white bg-brand-600/20 text-brand-400;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-400 via-accent-purple to-accent-cyan
+           bg-clip-text text-transparent;
+  }
+
+  /* Chat bubble — user */
+  .chat-bubble-user {
+    @apply bg-brand-600/20 border border-brand-500/30 rounded-2xl rounded-br-sm
+           px-4 py-3 text-white max-w-[75%] self-end;
+  }
+
+  /* Chat bubble — assistant */
+  .chat-bubble-assistant {
+    @apply glass-card px-4 py-3 text-gray-100 max-w-[85%] self-start;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply bg-gradient-to-r from-surface-700 via-surface-600 to-surface-700
+           bg-[length:200%_100%] animate-shimmer rounded-lg;
+  }
+}
+
+/* ── Utility Overrides ──────────────────────────────────────── */
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
