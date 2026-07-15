@@ -1,3 +1,4 @@
+import ReactMarkdown from "react-markdown";
 function MessageBubble({ message }) {
 
     const isUser = message.sender === "user";
@@ -15,7 +16,15 @@ function MessageBubble({ message }) {
                         : "chat-bubble-assistant"
                 }
             >
-                {message.text}
+               <ReactMarkdown
+    className={
+        isUser
+            ? "max-w-none"
+            : "prose prose-invert max-w-none prose-headings:text-white prose-p:text-white prose-strong:text-white prose-li:text-white prose-code:text-cyan-300"
+    }
+>
+    {message.text}
+</ReactMarkdown>
             </div>
 
         </div>

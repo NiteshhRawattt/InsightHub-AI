@@ -6,49 +6,83 @@ import MessageInput from "../components/chat/MessageInput";
 function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+
   return (
     <div className="flex h-screen bg-surface-900">
       <Sidebar />
 
       <div className="flex flex-col flex-1">
         <ChatWindow
-        messages={messages}
-        isTyping={isTyping}
+          messages={messages}
+          isTyping={isTyping}
         />
 
         <MessageInput
-          onSend={(text) => {
+          onSend={async (text) => {
+            // User message add karo
+            const userMessage = {
+              id: Date.now(),
+              text,
+              sender: "user",
+            };
 
-            const updatedMessages = [
-              ...messages,
-              {
-                id: Date.now(),
-                text,
-                sender: "user",
-              },
-            ];
-
-            setMessages(updatedMessages);
+            setMessages((prev) => [...prev, userMessage]);
             setIsTyping(true);
-            setTimeout(() => {
 
-               setMessages((prev) => [
+            // Empty assistant message
+            const assistantId = Date.now() + 1;
 
-                  ...prev,
-
-                {
-                  id: Date.now() + 1,
-                  text: "This is a fake AI response.",
-                  sender: "assistant",
-                },
-
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: assistantId,
+                text: "",
+                sender: "assistant",
+              },
             ]);
-            setIsTyping(false);
 
-          }, 1000);
+            try {
+              const response = await fetch(
+                "http://127.0.0.1:8000/api/v1/chat/",
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    message: text,
+                  }),
+                }
+              );
 
+              const data = await response.json();
 
-            console.log(updatedMessages);
+const fullText = data.reply;
+
+let aiText = "";
+
+for (const char of fullText) {
+  console.log(char);
+  aiText += char;
+
+  setMessages((prev) =>
+    prev.map((msg) =>
+      msg.id === assistantId
+        ? {
+            ...msg,
+            text: aiText,
+          }
+        : msg
+    )
+  );
+
+  await new Promise((resolve) => setTimeout(resolve, 12));
+}
+            } catch (error) {
+              console.error(error);
+            } finally {
+              setIsTyping(false);
+            }
           }}
         />
       </div>

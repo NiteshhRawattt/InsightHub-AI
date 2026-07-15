@@ -1,5 +1,5 @@
 import MessageBubble from "./MessageBubble";
-function ChatWindow({ messages }) {
+function ChatWindow({ messages, isTyping }) {
 
     // Agar messages hain to sirf chat dikhani hai
     if (messages.length > 0) {
@@ -16,6 +16,20 @@ function ChatWindow({ messages }) {
                     />
 
                     ))}
+                    {/*{isTyping && (
+
+                     <div className="flex justify-start">
+
+                        <div className="chat-bubble-assistant">
+
+                     Thinking...
+
+                         </div>
+
+                         </div>
+
+                    )}
+                    */}
 
                 </div>
 

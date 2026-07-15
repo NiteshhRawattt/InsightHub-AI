@@ -1,3 +1,4 @@
+import typography from "@tailwindcss/typography";
 /** @type {import('tailwindcss').Config} */
 export default {
   // ── Purge / Content ────────────────────────────────────────
@@ -108,5 +109,5 @@ export default {
     },
   },
 
-  plugins: [],
+  plugins: [typography],
 }
