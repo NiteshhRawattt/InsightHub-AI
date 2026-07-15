@@ -1,22 +1,33 @@
+import MessageBubble from "./MessageBubble";
 function ChatWindow({ messages }) {
+
+    // Agar messages hain to sirf chat dikhani hai
+    if (messages.length > 0) {
+        return (
+            <div className="flex-1 p-8 overflow-y-auto">
+
+                <div className="space-y-4">
+
+                    {messages.map((message) => (
+
+                    <MessageBubble
+                    key={message.id}
+                    message={message}
+                    />
+
+                    ))}
+
+                </div>
+
+            </div>
+        );
+    }
+
+    // Agar koi message nahi hai to Welcome Screen dikhani hai
     return (
         <div className="flex-1 flex items-center justify-center px-8">
 
             <div className="max-w-2xl text-center">
-                 <div className="mt-10 space-y-4 text-left">
-
-    {messages.map((message) => (
-
-        <div
-            key={message.id}
-            className="chat-bubble-user"
-        >
-            {message.text}
-        </div>
-
-    ))}
-
-</div>
 
                 <h1 className="text-5xl font-bold text-white">
                     Welcome to InsightHub AI
@@ -29,6 +40,7 @@ function ChatWindow({ messages }) {
                 <p className="mt-2 text-gray-500">
                     Upload PDFs, ask questions, summarize documents and discover insights.
                 </p>
+
                 <div className="mt-12">
                     <h2 className="text-lg font-semibold text-gray-300 mb-4">
                         Suggested Prompts
@@ -54,7 +66,6 @@ function ChatWindow({ messages }) {
 
                     </div>
                 </div>
-                
 
             </div>
 

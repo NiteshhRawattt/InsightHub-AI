@@ -92,7 +92,7 @@
 
   /* Chat bubble — assistant */
   .chat-bubble-assistant {
-    @apply glass-card px-4 py-3 text-gray-900 max-w-[85%] self-start;
+    @apply glass-card px-4 py-3 text-white max-w-[85%] self-start;
   }
 
   /* Loading skeleton */
