@@ -1,8 +1,22 @@
-function ChatWindow() {
+function ChatWindow({ messages }) {
     return (
         <div className="flex-1 flex items-center justify-center px-8">
 
             <div className="max-w-2xl text-center">
+                 <div className="mt-10 space-y-4 text-left">
+
+    {messages.map((message) => (
+
+        <div
+            key={message.id}
+            className="chat-bubble-user"
+        >
+            {message.text}
+        </div>
+
+    ))}
+
+</div>
 
                 <h1 className="text-5xl font-bold text-white">
                     Welcome to InsightHub AI
@@ -40,6 +54,7 @@ function ChatWindow() {
 
                     </div>
                 </div>
+                
 
             </div>
 

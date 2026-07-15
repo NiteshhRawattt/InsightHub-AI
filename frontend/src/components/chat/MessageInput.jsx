@@ -1,13 +1,12 @@
 import { useState } from "react";
-function MessageInput() {
+function MessageInput({ onSend }) {
     const [message, setMessage] = useState("");
     const handleSend = () => {
-
         if (message.trim() === "") return;
 
-        alert(message);
-        setMessage("");
+        onSend(message);
 
+        setMessage("");
     };
     return (
         <div className="border-t border-surface-500 p-5">

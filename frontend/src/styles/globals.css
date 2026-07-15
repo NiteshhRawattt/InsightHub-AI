@@ -68,7 +68,7 @@
 
   /* Input field */
   .input-field {
-    @apply w-full px-4 py-2.5 rounded-xl bg-surface-600/50 border border-surface-500/60 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/60 focus:border-brand-500/60 transition-all duration-200;
+    @apply w-full px-4 py-2.5 rounded-xl bg-white border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all duration-200;
   }
 
   /* Sidebar item */
