@@ -1,6 +1,6 @@
 # 🧠 InsightHub AI
 
-> A production-quality, NotebookLM-inspired AI research assistant powered by Google Gemini.
+> A production-quality, AI research assistant powered by Google Gemini.
 
 ![InsightHub AI](https://img.shields.io/badge/InsightHub-AI-6366f1?style=for-the-badge&logo=google&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
