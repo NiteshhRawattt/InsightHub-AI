@@ -52,6 +52,22 @@ async def health_check():
 
 
 # ── TODO: Register Routers Here (added in future steps) ──────
-# from app.api import chat, documents
-# app.include_router(chat.router, prefix="/api/v1/chat", tags=["Chat"])
-# app.include_router(documents.router, prefix="/api/v1/documents", tags=["Documents"])
+from app.api import chat, documents, upload
+
+app.include_router(
+    chat.router,
+    prefix="/api/v1/chat",
+    tags=["Chat"]
+)
+
+app.include_router(
+    documents.router,
+    prefix="/api/v1/documents",
+    tags=["Documents"]
+)
+
+app.include_router(
+    upload.router,
+    prefix="/api/v1/upload",
+    tags=["Upload"]
+)

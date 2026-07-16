@@ -4,14 +4,36 @@ Placeholder — implementation in next phase.
 """
 
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+from app.services.ai_service import (
+    generate_response,
+    generate_response_stream,
+)
 
 router = APIRouter()
+
+class ChatRequest(BaseModel):
+    message: str
 
 
 @router.get("/ping", summary="Chat service ping")
 async def chat_ping():
     """Simple ping to verify the chat service is wired up."""
     return {"message": "Chat service ready", "status": "stub"}
+
+@router.post("/")
+async def chat(request: ChatRequest):
+
+    print("Message received:", request.message)
+
+    response = generate_response(request.message)
+
+    return JSONResponse(
+        content={
+            "reply": response
+        }
+    )
 
 
 # TODO: Implement in next phase:
