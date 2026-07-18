@@ -6,10 +6,7 @@ Placeholder — implementation in next phase.
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from app.services.ai_service import (
-    generate_response,
-    generate_response_stream,
-)
+from app.rag.rag_pipeline import generate_rag_response
 
 router = APIRouter()
 
@@ -27,13 +24,13 @@ async def chat(request: ChatRequest):
 
     print("Message received:", request.message)
 
-    response = generate_response(request.message)
+    response = generate_rag_response(request.message)
 
     return JSONResponse(
-        content={
-            "reply": response
-        }
-    )
+    content={
+        "reply": response
+    }
+)
 
 
 # TODO: Implement in next phase:

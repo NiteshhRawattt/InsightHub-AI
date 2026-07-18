@@ -6,7 +6,6 @@ from app.rag.extractor import extract_text_from_pdf
 from app.rag.chunker import chunk_text
 from app.rag.embeddings import generate_embeddings
 from app.rag.vector_store import store_embeddings
-from app.rag.rag_pipeline import retrieve_context
 
 router = APIRouter(tags=["Upload"])
 
@@ -29,19 +28,7 @@ async def upload_pdf(file: UploadFile = File(...)):
 
         text = extract_text_from_pdf(str(file_path))
 
-        print("=" * 50)
-        print("Extracted Text:")
-        print(text[:1000])
-        print("=" * 50)
-
-
         chunks = chunk_text(text)
-
-        print(f"\nTotal Chunks Created: {len(chunks)}")
-
-        for i, chunk in enumerate(chunks[:3], start=1):
-            print(f"\n------ Chunk {i} ------")
-            print(chunk)
 
         embeddings = generate_embeddings(chunks)
 
@@ -51,26 +38,8 @@ async def upload_pdf(file: UploadFile = File(...)):
         embeddings=embeddings
         )
 
-        print("\n" + "=" * 50)
-        print("Testing Retriever...")
-        print("=" * 50)
-
-        results = retrieve_context(
-            "When does the internship start?"
-        )
-
-        documents = results.get("documents", [])
-
-        if documents:
-            retrieved_docs = documents[0]
-
-            for i, doc in enumerate(retrieved_docs, start=1):
-                print(f"\n----- Retrieved Chunk {i} -----")
-                print(doc)
-        else:
-            print("No documents found.")
-            
-        print(results)
+        
+       
 
         print("\nEmbeddings stored successfully in ChromaDB.")
 
