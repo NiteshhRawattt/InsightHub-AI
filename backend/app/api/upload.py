@@ -57,3 +57,13 @@ async def upload_pdf(file: UploadFile = File(...)):
         "message": "PDF uploaded successfully!",
             "filename": file.filename
     }
+@router.get("/files")
+async def list_uploaded_files():
+        files = []
+
+        for file in UPLOAD_DIR.glob("*.pdf"):
+            files.append(file.name)
+
+        return {
+            "files": files
+        }
