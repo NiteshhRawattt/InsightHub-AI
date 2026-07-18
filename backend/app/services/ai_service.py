@@ -54,7 +54,8 @@ Question:
 """
 
     try:
-        print("Using model:", settings.GEMINI_MODEL)
+        print("Current Model:", settings.GEMINI_MODEL)
+        # print("Using model:", settings.GEMINI_MODEL)
         print("About to call generate_content_stream()")
         stream = client.models.generate_content_stream(
            model=settings.GEMINI_MODEL,

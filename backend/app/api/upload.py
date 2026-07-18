@@ -2,6 +2,8 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from pathlib import Path
 import shutil
 
+from app.rag.extractor import extract_text_from_pdf
+
 router = APIRouter(tags=["Upload"])
 
 UPLOAD_DIR = Path("app/uploads")
@@ -20,6 +22,13 @@ async def upload_pdf(file: UploadFile = File(...)):
 
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
+
+        text = extract_text_from_pdf(str(file_path))
+
+        print("=" * 50)
+        print("Extracted Text:")
+        print(text[:1000])
+        print("=" * 50)
 
     return {
         "message": "PDF uploaded successfully!",
