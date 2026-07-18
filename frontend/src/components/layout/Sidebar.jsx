@@ -7,7 +7,38 @@ import {
     Plus,
     User
 } from "lucide-react";
+import { useRef } from "react";
+
 function Sidebar() {
+    const fileInputRef = useRef(null);
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch(
+                "http://localhost:8000/api/v1/upload/",
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            const data = await response.json();
+
+            alert(data.message);
+
+            event.target.value = "";
+        } catch (error) {
+            console.error(error);
+            alert("Upload failed!");
+        }
+    };
+
     return (
         <div className="w-72 bg-surface-800 border-r border-surface-500 flex flex-col">
 
@@ -35,6 +66,22 @@ function Sidebar() {
                     <FileText size={18} />
                     <span>Documents</span>
                 </div>
+
+                <input
+                    type="file"
+                    accept=".pdf"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={handleFileUpload}
+                />
+
+                <button
+                    className="btn-primary w-full mt-2"
+                    onClick={() => fileInputRef.current.click()}
+                >
+                 <Plus size={18} />
+                 Upload PDF
+                </button>
 
                 <div className="sidebar-item">
                     <Star size={18} />
