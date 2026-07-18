@@ -3,6 +3,7 @@ from pathlib import Path
 import shutil
 
 from app.rag.extractor import extract_text_from_pdf
+from app.rag.chunker import chunk_text
 
 router = APIRouter(tags=["Upload"])
 
@@ -30,7 +31,16 @@ async def upload_pdf(file: UploadFile = File(...)):
         print(text[:1000])
         print("=" * 50)
 
+
+        chunks = chunk_text(text)
+
+        print(f"\nTotal Chunks Created: {len(chunks)}")
+
+        for i, chunk in enumerate(chunks[:3], start=1):
+            print(f"\n------ Chunk {i} ------")
+            print(chunk)
+
     return {
         "message": "PDF uploaded successfully!",
-        "filename": file.filename
+            "filename": file.filename
     }
