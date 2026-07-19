@@ -6,10 +6,14 @@ import MessageInput from "../components/chat/MessageInput";
 function ChatPage() {
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState(null);
 
   return (
     <div className="flex h-screen bg-surface-900">
-      <Sidebar />
+      <Sidebar
+        selectedDocument={selectedDocument}
+        setSelectedDocument={setSelectedDocument}
+      />
 
       <div className="flex flex-col flex-1">
         <ChatWindow
@@ -51,6 +55,7 @@ function ChatPage() {
                   },
                   body: JSON.stringify({
                     message: text,
+                    selected_document: selectedDocument,
                   }),
                 }
               );

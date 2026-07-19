@@ -7,10 +7,14 @@ import {
     Plus,
     User
 } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-function Sidebar() {
+function Sidebar({
+    selectedDocument,
+    setSelectedDocument,
+})  {
     const fileInputRef = useRef(null);
+    const [documents, setDocuments] = useState([]);
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
 
@@ -39,6 +43,24 @@ function Sidebar() {
         }
     };
 
+    useEffect(() => {
+        const fetchDocuments = async () => {
+            try {
+                const response = await fetch(
+                    "http://localhost:8000/api/v1/upload/files"
+                );
+
+                const data = await response.json();
+
+                setDocuments(data.files);
+            } catch (error) {
+                console.error("Failed to fetch documents:", error);
+            }
+        };
+
+        fetchDocuments();   
+    }, []);
+
     return (
         <div className="w-72 bg-surface-800 border-r border-surface-500 flex flex-col">
 
@@ -66,6 +88,33 @@ function Sidebar() {
                     <FileText size={18} />
                     <span>Documents</span>
                 </div>
+
+                {selectedDocument && (
+                    <p className="text-xs text-brand-400 px-3 mt-2">
+                    Active: {selectedDocument}
+                    </p>
+                    )}
+
+                {documents.length > 0 && (
+                    <div className="mt-2 mb-3 space-y-2">   
+                        {documents.map((doc, index) => (
+                            <div
+                                key={index}
+                                 onClick={() => setSelectedDocument(doc)}
+                                className={`flex items-center gap-2 px-3 py-2 text-sm rounded-lg cursor-pointer transition
+
+                                ${
+                                    selectedDocument === doc
+                                    ? "bg-brand-500 text-white"
+                                    :"text-gray-300 hover:bg-surface-700"
+                                }`}
+                            >
+                                <FileText size={16} />
+                                <span className="truncate">{doc}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <input
                     type="file"
