@@ -12,6 +12,7 @@ router = APIRouter()
 
 class ChatRequest(BaseModel):
     message: str
+    selected_document: str | None = None
 
 
 @router.get("/ping", summary="Chat service ping")
@@ -23,8 +24,12 @@ async def chat_ping():
 async def chat(request: ChatRequest):
 
     print("Message received:", request.message)
+    print("Selected document:", request.selected_document)
 
-    response = generate_rag_response(request.message)
+    response = generate_rag_response(
+    request.message,
+    request.selected_document,
+    )
 
     return JSONResponse(
     content={

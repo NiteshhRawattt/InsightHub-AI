@@ -3,7 +3,11 @@ from app.rag.vector_store import collection
 from app.core.config import settings
 
 
-def retrieve_context(query: str, n_results: int = 3):
+def retrieve_context(
+    query: str,
+    selected_document: str | None = None,
+    n_results: int = 3,
+):
     """
     Retrieve the most relevant chunks from ChromaDB.
     """
@@ -17,9 +21,16 @@ def retrieve_context(query: str, n_results: int = 3):
     query_embedding = response.embeddings[0].values
 
     # Search ChromaDB
-    results = collection.query(
+    if selected_document:
+        results = collection.query(
         query_embeddings=[query_embedding],
-        n_results=n_results
+        n_results=n_results,
+        where={"filename": selected_document},
+    )
+    else:
+        results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=n_results,
     )
 
     print("\n===== RAW CHROMADB RESPONSE =====")
@@ -28,9 +39,15 @@ def retrieve_context(query: str, n_results: int = 3):
 
     return results
 
-def generate_rag_response(question: str):
+def generate_rag_response(
+    question: str,
+    selected_document: str | None = None,
+):
 
-    results = retrieve_context(question)
+    results = retrieve_context(
+    question,
+    selected_document,
+)
 
     documents = results.get("documents", [])
 
