@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     LOG_LEVEL: str = "INFO"
 
+    # ── Database ──────────────────────────────────────────────
+    DATABASE_URL: str
+
     # ── Google Gemini ─────────────────────────────────────────
     GEMINI_API_KEY: str
     GEMINI_MODEL: str = "gemini-1.5-pro"
