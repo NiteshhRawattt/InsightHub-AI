@@ -1,4 +1,5 @@
-from app.rag.rag_pipeline import generate_rag_response
+from app.rag.rag_pipeline import get_document_context
+from app.ai.prompt_manager import get_rag_prompt
 from app.ai.gemini import generate_text
 
 TASK_KEYWORDS = {
@@ -17,10 +18,9 @@ TASK_KEYWORDS = {
         "brief",
     ],
     "quiz": [
-        "quiz",
-        "mcq",
-        "multiple choice",
-        "questions",
+    "quiz",
+    "mcq",
+    "multiple choice",
     ],
     "translation": [
         "translate",
@@ -70,12 +70,22 @@ class TaskEngine:
 
         print("Detected Task:", task)
 
-        # If a document is selected → use RAG
         if selected_document:
-            return generate_rag_response(
+
+            context = get_document_context(
                 question=message,
                 selected_document=selected_document,
             )
 
-        # Otherwise → General Chat
+            if context is None:
+                return "No relevant information found."
+
+            prompt = get_rag_prompt(
+                context=context,
+                question=message,
+            )
+
+            return generate_text(prompt)
+
+# Otherwise → General Chat
         return generate_text(message)

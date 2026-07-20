@@ -39,22 +39,48 @@ def retrieve_context(
 
     return results
 
-def generate_rag_response(
+def get_document_context(
     question: str,
     selected_document: str | None = None,
 ):
+    """
+    Retrieve and combine the most relevant document chunks.
+    """
 
     results = retrieve_context(
-    question,
-    selected_document,
-)
+        question,
+        selected_document,
+    )
 
     documents = results.get("documents", [])
 
     if not documents:
-        return "No relevant information found."
+        return None
 
     context = "\n\n".join(documents[0])
+
+    return context
+
+def generate_rag_response(
+    question: str,
+    selected_document: str | None = None,
+):
+    
+    context = get_document_context(
+        question,
+        selected_document,
+    )
+
+    if context is None:
+        return "No relevant information found."
+
+    context = get_document_context(
+    question,
+    selected_document,
+    )
+
+    if context is None:
+        return "No relevant information found."
 
     from app.ai.prompt_manager import get_rag_prompt
 
