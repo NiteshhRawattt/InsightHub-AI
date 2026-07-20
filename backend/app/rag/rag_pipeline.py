@@ -56,24 +56,15 @@ def generate_rag_response(
 
     context = "\n\n".join(documents[0])
 
-    prompt = f"""
-You are an AI assistant answering questions ONLY from the provided document.
+    from app.ai.prompt_manager import get_rag_prompt
 
-Document Context:
-{context}
-
-Question:
-{question}
-
-Rules:
-- Answer only using the document context.
-- If the answer is not present, reply:
-  "The answer is not available in the uploaded document."
-- Keep the answer clear and concise.
-"""
-
-    response = client.models.generate_content(
-        model=settings.GEMINI_MODEL,
-        contents=prompt,
+    prompt = get_rag_prompt(
+        context=context,
+        question=question,
     )
-    return response.text
+
+    from app.ai.gemini import generate_text
+
+    ...
+
+    return generate_text(prompt)

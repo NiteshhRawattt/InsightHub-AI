@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from app.rag.rag_pipeline import generate_rag_response
+from app.ai.task_engine import TaskEngine
 
 router = APIRouter()
 
@@ -26,9 +27,9 @@ async def chat(request: ChatRequest):
     print("Message received:", request.message)
     print("Selected document:", request.selected_document)
 
-    response = generate_rag_response(
-    request.message,
-    request.selected_document,
+    response = TaskEngine.process(
+        message=request.message,
+        selected_document=request.selected_document,
     )
 
     return JSONResponse(
