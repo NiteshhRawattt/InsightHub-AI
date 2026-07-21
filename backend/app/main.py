@@ -1,3 +1,4 @@
+from app.auth.routes import router as auth_router
 """
 InsightHub AI — FastAPI Application Entry Point
 """
@@ -17,6 +18,7 @@ app = FastAPI(
     redoc_url="/redoc",
     openapi_url="/openapi.json",
 )
+app.include_router(auth_router)
 
 # ── CORS Middleware ───────────────────────────────────────────
 app.add_middleware(

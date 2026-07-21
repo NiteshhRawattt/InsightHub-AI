@@ -6,3 +6,4 @@ class Base(DeclarativeBase):
     Base class for all SQLAlchemy ORM models.
     """
     pass
+
