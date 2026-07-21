@@ -7,8 +7,14 @@ from sqlalchemy.orm import Session
 
 from app.auth.email import send_otp_email
 from app.auth.models import OTP, User
-from app.auth.otp import generate_otp, get_otp_expiry, hash_otp
-from app.auth.schemas import SignupRequest
+from app.auth.otp import (
+    generate_otp,
+    get_otp_expiry,
+    hash_otp,
+    is_otp_expired,
+    verify_otp,
+)
+from app.auth.schemas import SignupRequest, VerifyOTPRequest
 from app.auth.security import hash_password
 
 
@@ -152,5 +158,97 @@ async def signup_user(
     else:
         # SMS integration will be added later.
         print(f"\n[DEV OTP] {payload.phone}: {plain_otp}\n")
+
+    return user
+
+async def verify_signup_otp(
+    db: Session,
+    payload: VerifyOTPRequest,
+) -> User:
+    """
+    Verify the latest signup OTP and activate the user account.
+    """
+
+    user = get_user_by_identifier(
+        db=db,
+        email=payload.email,
+        phone=payload.phone,
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User account not found.",
+        )
+
+    if user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Account is already verified.",
+        )
+
+    statement = (
+        select(OTP)
+        .where(
+            OTP.user_id == user.id,
+            OTP.purpose == "signup_verification",
+            OTP.is_used.is_(False),
+        )
+        .order_by(OTP.created_at.desc())
+    )
+
+    otp_record = db.scalars(statement).first()
+
+    if not otp_record:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No active OTP found. Please request a new OTP.",
+        )
+
+    if is_otp_expired(otp_record.expires_at):
+        otp_record.is_used = True
+        db.commit()
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="OTP has expired. Please request a new OTP.",
+        )
+
+    if otp_record.attempts >= 5:
+        otp_record.is_used = True
+        db.commit()
+
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Maximum OTP attempts exceeded. Please request a new OTP.",
+        )
+
+    if not verify_otp(
+        plain_otp=payload.otp,
+        stored_hash=otp_record.otp_hash,
+    ):
+        otp_record.attempts += 1
+        db.commit()
+
+        remaining_attempts = max(
+            0,
+            5 - otp_record.attempts,
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid OTP. {remaining_attempts} attempts remaining.",
+        )
+
+    try:
+        otp_record.is_used = True
+        user.is_verified = True
+
+        db.commit()
+        db.refresh(user)
+
+    except Exception:
+        db.rollback()
+        raise
 
     return user
