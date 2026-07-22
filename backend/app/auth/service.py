@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+import hashlib
+from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException, status
 from sqlalchemy import or_, select
@@ -6,7 +7,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.auth.email import send_otp_email
-from app.auth.models import OTP, User
+from app.auth.models import OTP, RefreshToken, User
 from app.auth.otp import (
     generate_otp,
     get_otp_expiry,
@@ -14,9 +15,16 @@ from app.auth.otp import (
     is_otp_expired,
     verify_otp,
 )
-from app.auth.schemas import SignupRequest, VerifyOTPRequest
-from app.auth.security import hash_password
+from app.auth.schemas import (
+    LoginRequest,
+    SignupRequest,
+    TokenResponse,
+    VerifyOTPRequest,
+)
+from app.auth.security import hash_password, verify_password
 
+from app.auth.jwt import create_access_token, create_refresh_token
+from app.core.config import settings
 
 def get_user_by_email(
     db: Session,
@@ -252,3 +260,84 @@ async def verify_signup_otp(
         raise
 
     return user
+
+def hash_refresh_token(token: str) -> str:
+    """
+    Hash refresh token before storing it in the database.
+    """
+
+    return hashlib.sha256(
+        token.encode("utf-8")
+    ).hexdigest()
+
+async def login_user(
+    db: Session,
+    payload: LoginRequest,
+) -> TokenResponse:
+    """
+    Authenticate a user and issue access and refresh tokens.
+    """
+
+    user = get_user_by_identifier(
+        db=db,
+        email=payload.email,
+        phone=payload.phone,
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email, phone number, or password.",
+        )
+
+    if not verify_password(
+        plain_password=payload.password,
+        hashed_password=user.password_hash,
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email, phone number, or password.",
+        )
+
+    if not user.is_verified:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account is not verified. Please verify your OTP first.",
+        )
+
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Account is inactive.",
+        )
+
+    access_token = create_access_token(
+        subject=str(user.id),
+    )
+
+    refresh_token = create_refresh_token(
+        subject=str(user.id),
+    )
+
+    refresh_token_record = RefreshToken(
+        user_id=user.id,
+        token_hash=hash_refresh_token(refresh_token),
+        expires_at=datetime.now(timezone.utc)
+        + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS),
+        is_revoked=False,
+        created_at=datetime.now(timezone.utc),
+    )
+
+    try:
+        db.add(refresh_token_record)
+        db.commit()
+
+    except Exception:
+        db.rollback()
+        raise
+
+    return TokenResponse(
+        access_token=access_token,
+        refresh_token=refresh_token,
+        user=user,
+    )
