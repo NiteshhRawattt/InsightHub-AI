@@ -1,4 +1,4 @@
-# 🧠 InsightHub AI
+#  InsightHub AI
 
 > A production-quality, AI research assistant powered by Google Gemini.
 
@@ -10,26 +10,26 @@
 
 ---
 
-## 📌 Overview
+##  Overview
 
 **InsightHub AI** is a full-stack, AI-powered research assistant that lets you upload documents (PDF, DOCX, TXT), chat with your content, receive source citations, and explore multi-document knowledge — all in a beautiful dark-themed interface.
 
 ---
 
-## ✨ Features (Planned)
+##  Features (Planned)
 
-- 📄 **Document Upload** — PDF, DOCX, TXT support
-- 🤖 **AI Chat** — Google Gemini-powered conversational AI with streaming
-- 📚 **Source Citations** — Pinpoint exactly where answers come from
-- 🗂️ **Multi-Document Support** — Query across multiple files simultaneously
-- 🧠 **Chat History** — Persistent session memory
-- 🔍 **Semantic Search** — ChromaDB vector store for intelligent retrieval
-- 🌊 **Streaming Responses** — Real-time AI output via Server-Sent Events
-- 🔒 **Server-Side API Key** — Your Gemini key never leaves the server
+-  **Document Upload** — PDF, DOCX, TXT support
+-  **AI Chat** — Google Gemini-powered conversational AI with streaming
+-  **Source Citations** — Pinpoint exactly where answers come from
+-  **Multi-Document Support** — Query across multiple files simultaneously
+-  **Chat History** — Persistent session memory
+-  **Semantic Search** — ChromaDB vector store for intelligent retrieval
+-  **Streaming Responses** — Real-time AI output via Server-Sent Events
+-  **Server-Side API Key** — Your Gemini key never leaves the server
 
 ---
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```
 InsightHub-AI/
@@ -95,7 +95,7 @@ InsightHub-AI/
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -151,7 +151,7 @@ npm run dev
 
 ---
 
-## 🔧 Environment Variables
+##  Environment Variables
 
 | Variable | Description | Required |
 |---|---|---|
@@ -165,7 +165,7 @@ npm run dev
 
 ---
 
-## 🐳 Docker Architecture
+##  Docker Architecture
 
 ```
 docker-compose
@@ -176,13 +176,13 @@ docker-compose
 
 ---
 
-## ☁️ AWS App Runner
+##  AWS App Runner
 
 Ready for AWS App Runner deployment. See [docs/deployment.md](docs/deployment.md).
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -195,7 +195,7 @@ Ready for AWS App Runner deployment. See [docs/deployment.md](docs/deployment.md
 
 ---
 
-## 📄 License
+##  License
 
 MIT License — see [LICENSE](LICENSE) for details.
 
